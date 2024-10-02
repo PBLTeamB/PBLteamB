@@ -67,9 +67,14 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                         );
                       }
                     : null,
-                child: Text('Next',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text(
+                  'Next',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: selectedPlant != null
                       ? Colors.green
