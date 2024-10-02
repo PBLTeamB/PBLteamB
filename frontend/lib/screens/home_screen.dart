@@ -6,9 +6,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9F9F9), 
+      backgroundColor: Color(0xFFF9F9F9),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, 
+        currentIndex: 0,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Color(0xFF549154),
         unselectedItemColor: Colors.grey,
@@ -32,16 +32,14 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding:
-            const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16), 
-            _buildTopSection(context), 
+            const SizedBox(height: 16),
+            _buildTopSection(context),
             const SizedBox(height: 24),
-            _buildToggleButtons(
-                context), 
+            _buildToggleButtons(context),
             const SizedBox(height: 24),
             _buildPlantCard(),
           ],
@@ -89,8 +87,7 @@ class HomeScreen extends StatelessWidget {
                         text: '(60°F ~ 77°F)',
                         style: TextStyle(
                           fontSize: 14,
-                          fontWeight:
-                              FontWeight.normal, 
+                          fontWeight: FontWeight.normal,
                           color: Colors.grey,
                         ),
                       ),
@@ -103,8 +100,7 @@ class HomeScreen extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
-            border:
-                Border.all(color: Colors.grey.shade300), 
+            border: Border.all(color: Colors.grey.shade300),
             borderRadius: BorderRadius.circular(8),
           ),
           child: IconButton(
@@ -133,7 +129,7 @@ class HomeScreen extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 24),
             decoration: BoxDecoration(
-              color: Color(0xFF549154), 
+              color: Color(0xFF549154),
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
@@ -176,11 +172,11 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildPlantCard() {
     return Container(
-      width: 164, // Make it square (same width and height)
+      width: 164,
       height: 164,
       decoration: BoxDecoration(
         color: Color(0xFFD9D9D9),
-        borderRadius: BorderRadius.circular(20), 
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
