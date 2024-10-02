@@ -1,11 +1,53 @@
 import 'package:flutter/material.dart';
+import 'home_screen.dart';
 import 'plant_details_screen.dart';
 
-class NotificationScreen extends StatelessWidget {
+class NotificationScreen extends StatefulWidget {
+  @override
+  _NotificationScreenState createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen> {
+  int _currentIndex = 1;
+
+  final List<Widget> _screens = [
+    HomeScreen(),
+    NotificationScreen(),
+  ];
+
+  void onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+      if (index != 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => _screens[index]),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Color(0xFF549154),
+        unselectedItemColor: Colors.grey,
+        onTap: onTabTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -16,7 +58,7 @@ class NotificationScreen extends StatelessWidget {
             const SizedBox(height: 24),
             _buildToggleButtons(context),
             const SizedBox(height: 24),
-            _buildNotificationList(),
+            _buildNotificationList(context),
           ],
         ),
       ),
@@ -92,7 +134,12 @@ class NotificationScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 24),
             decoration: BoxDecoration(
@@ -132,7 +179,7 @@ class NotificationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationList() {
+  Widget _buildNotificationList(BuildContext context) {
     return Expanded(
       child: ListView(
         children: [
@@ -145,7 +192,14 @@ class NotificationScreen extends StatelessWidget {
             leadingIcon: Icons.local_florist,
             title: 'Check out your new plant',
             subtitle: 'Last water time: 8 days ago\nSoil Moisture: 65%',
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlantDetailsScreen(plantName: 'Monstera'),
+                ),
+              );
+            },
           ),
           SizedBox(height: 24),
           Text(
