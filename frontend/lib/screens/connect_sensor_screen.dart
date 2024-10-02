@@ -14,7 +14,6 @@ class _ConnectSensorScreenState extends State<ConnectSensorScreen> {
     setState(() {
       isConnecting = true;
     });
-    // Simulate sensor connection process
     Future.delayed(Duration(seconds: 3), () {
       setState(() {
         isConnected = true;
@@ -69,7 +68,6 @@ class _ConnectSensorScreenState extends State<ConnectSensorScreen> {
             Stack(
               alignment: Alignment.center,
               children: [
-                // Circle for icon placement
                 Container(
                   width: 200,
                   height: 200,
@@ -84,7 +82,6 @@ class _ConnectSensorScreenState extends State<ConnectSensorScreen> {
                     strokeWidth: 6,
                   )
                 else if (isConnected)
-                  // Display "Done!" without the rectangle box
                   Text(
                     "Done!",
                     style: TextStyle(
@@ -108,7 +105,7 @@ class _ConnectSensorScreenState extends State<ConnectSensorScreen> {
               child: Text(
                 isConnecting ? "Connecting..." : "Connect now",
                 style: TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold), // Bold text
+                    fontSize: 18, fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: isConnecting ? Colors.grey : Color(0xFF549154),
@@ -116,14 +113,12 @@ class _ConnectSensorScreenState extends State<ConnectSensorScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
-                foregroundColor: Colors.white, // Make the text color white
+                foregroundColor: Colors.white,
               ),
             ),
             SizedBox(height: 12),
             TextButton(
-              onPressed: () {
-                // Skip sensor connection logic
-              },
+              onPressed: () {},
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -131,7 +126,7 @@ class _ConnectSensorScreenState extends State<ConnectSensorScreen> {
                     'Later',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold, // Bold text
+                      fontWeight: FontWeight.bold,
                       color: Color(0xFF549154),
                     ),
                   ),
