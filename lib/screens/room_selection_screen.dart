@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'confirm_plant_screen.dart';
 
 class RoomSelectionScreen extends StatefulWidget {
   final String site;
+  final String name;
+  final String subname;
+  final String imageUrl;
 
-  const RoomSelectionScreen({Key? key, required this.site}) : super(key: key);
+  const RoomSelectionScreen({
+    Key? key,
+    required this.site,
+    required this.name,
+    required this.subname,
+    required this.imageUrl,
+  }) : super(key: key);
 
   @override
   _RoomSelectionScreenState createState() => _RoomSelectionScreenState();
@@ -105,7 +115,7 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
                     foregroundColor: Colors.black,
                     side: BorderSide(
                       color: selectedIndex == index ? Colors.black : Colors.grey,
-                      ),
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -120,7 +130,18 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
             child: ElevatedButton(
               onPressed: isContinueEnabled
                   ? () {
-                      // 다음 단계로 이동하는 로직을 추가할 수 있습니다.
+                      if (selectedIndex != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ConfirmPlantScreen(
+                              plantName: widget.name,
+                              roomName: rooms[selectedIndex!],
+                              imageUrl: widget.imageUrl,
+                            ),
+                          ),
+                        );
+                      }
                     }
                   : null,
               child: const Text('Continue'),

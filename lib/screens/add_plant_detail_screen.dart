@@ -74,7 +74,11 @@ class AddPlantDetailScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SiteSelectionScreen(),
+                        builder: (context) => SiteSelectionScreen(
+                          name: name,
+                          subname: subname,
+                          imageUrl: imageUrl,
+                        ),
                       ),
                     );
                   },

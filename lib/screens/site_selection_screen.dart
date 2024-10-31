@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 import 'room_selection_screen.dart'; // RoomSelectionScreen 파일 import
 
 class SiteSelectionScreen extends StatefulWidget {
+  final String name;
+  final String subname;
+  final String imageUrl;
+
+  const SiteSelectionScreen({
+    Key? key,
+    required this.name,
+    required this.subname,
+    required this.imageUrl,
+  }) : super(key: key);
+
   @override
   _SiteSelectionScreenState createState() => _SiteSelectionScreenState();
 }
@@ -104,7 +115,7 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
                       color: selectedIndex == index ? Colors.black : Colors.grey,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8), 
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: Text(site),
@@ -120,7 +131,12 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RoomSelectionScreen(site: sites[selectedIndex!]),
+                          builder: (context) => RoomSelectionScreen(
+                            site: sites[selectedIndex!],
+                            name: widget.name,
+                            subname: widget.subname,
+                            imageUrl: widget.imageUrl,
+                          ),
                         ),
                       );
                     }
@@ -141,4 +157,3 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
     );
   }
 }
-
