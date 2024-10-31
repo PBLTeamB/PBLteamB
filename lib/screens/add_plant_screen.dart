@@ -1,8 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class AddPlantScreen extends StatelessWidget {
+import 'add_plant_detail_screen.dart'; // AddPlantDetailScreen 파일 경로에 맞게 수정
+
+class AddPlantScreen extends StatefulWidget {
   const AddPlantScreen({Key? key}) : super(key: key);
+
+  @override
+  _AddPlantScreenState createState() => _AddPlantScreenState();
+}
+
+class _AddPlantScreenState extends State<AddPlantScreen> {
+  List<dynamic> plantList = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPlantList();
+  }
+
+  Future<void> fetchPlantList() async {
+    var headers = {
+      'accept': 'application/json',
+      'Authorization': 'Bearer 11',
+    };
+    var request = http.Request('GET', Uri.parse('https://api.rootin.me/v1/plant-types?skip=0&size=10'));
+
+    request.headers.addAll(headers);
+
+    try {
+      http.StreamedResponse response = await request.send();
+      if (response.statusCode == 200) {
+        final responseBody = await response.stream.bytesToString();
+        final data = json.decode(responseBody);
+        setState(() {
+          plantList = data['data'];
+          isLoading = false;
+        });
+      } else {
+        print('Failed to load plant list: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,56 +135,73 @@ class AddPlantScreen extends StatelessWidget {
             ),
             const SizedBox(height: 36),
             Expanded(
-              child: ListView.builder(
-                itemCount: 5, // Replace with dynamic plant card count
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: SvgPicture.asset(
-                            'assets/images/card_plant.svg',
-                            color: Color(0xff757575),
-                            height: 60,
-                            width: 60,
+              child: isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: plantList.length,
+                      itemBuilder: (context, index) {
+                        final plant = plantList[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddPlantDetailScreen(
+                                  name: plant['name'] ?? 'Plant name',
+                                  subname: plant['subname'] ?? 'Sub plant name',
+                                  imageUrl: plant['imageUrl'] ?? 'assets/images/default_plant.png',
+                                ),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Image.network(
+                                    plant['imageUrl'] ?? 'assets/images/default_plant.png',
+                                    height: 60,
+                                    width: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      plant['name'] ?? 'Plant name',
+                                      style: const TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                        height: 1.36,
+                                        letterSpacing: -0.02,
+                                        color: Color(0xff000000),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      plant['subname'] ?? 'Sub plant name',
+                                      style: const TextStyle(
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                        height: 1.36,
+                                        letterSpacing: -0.02,
+                                        color: Color(0xff757575),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Plant name',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                height: 1.36,
-                                letterSpacing: -0.02,
-                                color: Color(0xff000000),
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Sub plant name',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12,
-                                height: 1.36,
-                                letterSpacing: -0.02,
-                                color: Color(0xff757575),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
