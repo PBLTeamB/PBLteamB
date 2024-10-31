@@ -18,6 +18,44 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
     });
   }
 
+  void addSite() async {
+    String? newSite = await showDialog(
+      context: context,
+      builder: (context) {
+        String siteName = "";
+        return AlertDialog(
+          title: const Text('Add a new site'),
+          content: TextField(
+            onChanged: (value) {
+              siteName = value;
+            },
+            decoration: const InputDecoration(hintText: 'Enter site name'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, siteName);
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (newSite != null && newSite.isNotEmpty) {
+      setState(() {
+        sites.add(newSite);
+        selectedIndex = sites.length - 1; // 새로 추가된 사이트를 선택 상태로 설정
+        isContinueEnabled = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,8 +77,20 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
                 crossAxisSpacing: 10,
                 childAspectRatio: 2.5,
               ),
-              itemCount: sites.length,
+              itemCount: sites.length + 1,
               itemBuilder: (context, index) {
+                if (index == sites.length) {
+                  return ElevatedButton(
+                    onPressed: addSite,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      side: BorderSide(color: Colors.grey),
+                    ),
+                    child: const Text('+ Add Site'),
+                  );
+                }
+
                 final site = sites[index];
                 return ElevatedButton(
                   onPressed: () => onSelectSite(index),
@@ -68,7 +118,7 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
                         ),
                       );
                     }
-                  : null, // 선택되지 않으면 비활성화
+                  : null,
               child: const Text('Continue'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
@@ -85,3 +135,4 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
     );
   }
 }
+

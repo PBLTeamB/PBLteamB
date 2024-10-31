@@ -21,6 +21,44 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
     });
   }
 
+  void addRoom() async {
+    String? newRoom = await showDialog(
+      context: context,
+      builder: (context) {
+        String roomName = "";
+        return AlertDialog(
+          title: const Text('Add a new room'),
+          content: TextField(
+            onChanged: (value) {
+              roomName = value;
+            },
+            decoration: const InputDecoration(hintText: 'Enter room name'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, roomName);
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (newRoom != null && newRoom.isNotEmpty) {
+      setState(() {
+        rooms.add(newRoom);
+        selectedIndex = rooms.length - 1; // 새로 추가된 방을 선택 상태로 설정
+        isContinueEnabled = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,8 +80,20 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
                 crossAxisSpacing: 10,
                 childAspectRatio: 2.5,
               ),
-              itemCount: rooms.length,
+              itemCount: rooms.length + 1,
               itemBuilder: (context, index) {
+                if (index == rooms.length) {
+                  return ElevatedButton(
+                    onPressed: addRoom,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      side: BorderSide(color: Colors.grey),
+                    ),
+                    child: const Text('+ Add Room'),
+                  );
+                }
+
                 final room = rooms[index];
                 return ElevatedButton(
                   onPressed: () => onSelectRoom(index),
@@ -64,9 +114,9 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
             child: ElevatedButton(
               onPressed: isContinueEnabled
                   ? () {
-                    }
                       // 다음 단계로 이동하는 로직을 추가할 수 있습니다.
-                  : null, // 선택되지 않으면 비활성화
+                    }
+                  : null,
               child: const Text('Continue'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
