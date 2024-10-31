@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'site_selection_screen.dart'; // SiteSelectionScreen 파일 import
 
 class AddPlantDetailScreen extends StatelessWidget {
   final String name;
@@ -23,58 +24,91 @@ class AddPlantDetailScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              name,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+      body: Column(
+        children: [
+          const Spacer(), // 상단 여백
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontFamily: "inter",
+                    fontSize: 24,
+                    height: 1.36,
+                    letterSpacing: -0.02,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  subname,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    height: 1.36,
+                    letterSpacing: -0.02,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.network(
+                    imageUrl,
+                    height: 200,
+                    width: 200,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              subname,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
+          ),
+          const Spacer(), // 하단 여백
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20).copyWith(bottom: 48),
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // SiteSelectionScreen으로 이동
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SiteSelectionScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Ready to add plant',
+                    style: TextStyle(
+                      fontFamily: "inter",
+                      fontSize: 16,
+                      letterSpacing: -0.02,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // AddPlantScreen으로 돌아가기
+                  },
+                  child: const Text(
+                    'Search again',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                imageUrl,
-                height: 200,
-                width: 200,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                // Add plant logic can go here
-              },
-              child: Text('Add Plant'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black, // primary를 backgroundColor로 변경
-                textStyle: const TextStyle(fontSize: 16),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                // Search again logic can go here
-              },
-              child: Text(
-                'Search again',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
