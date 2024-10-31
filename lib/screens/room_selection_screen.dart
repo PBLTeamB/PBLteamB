@@ -89,6 +89,9 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
                       side: BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: const Text('+ Add Room'),
                   );
@@ -102,6 +105,9 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
                     foregroundColor: Colors.black,
                     side: BorderSide(
                       color: selectedIndex == index ? Colors.black : Colors.grey,
+                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: Text(room),

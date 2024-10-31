@@ -86,6 +86,9 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
                       side: BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8), // 테두리 반경 조정
+                      ),
                     ),
                     child: const Text('+ Add Site'),
                   );
@@ -99,6 +102,9 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
                     foregroundColor: Colors.black,
                     side: BorderSide(
                       color: selectedIndex == index ? Colors.black : Colors.grey,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8), 
                     ),
                   ),
                   child: Text(site),
