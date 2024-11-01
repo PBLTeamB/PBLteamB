@@ -3,9 +3,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ConnectSensorModal extends StatelessWidget {
-  final int plantTypeId; // String에서 int로 변경
-  final int categoryId;   // String에서 int로 변경
-  final String sensorId;
+  final int plantTypeId; 
+  final int categoryId;   
+  final int sensorId; // int로
   final String imageUrl;
 
   ConnectSensorModal({
@@ -19,34 +19,49 @@ class ConnectSensorModal extends StatelessWidget {
     final url = Uri.parse('https://api.rootin.me/v1/plants');
     print("Starting POST request to register plant");
 
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'accept': 'application/json',
-      },
-      body: json.encode({
-        'plantTypeId': plantTypeId, // int 타입으로 전달
-        'categoryId': categoryId,   // int 타입으로 전달
-        'sensorId': sensorId,
-        'imageUrl': imageUrl,
-      }),
-    );
+    // 요청 바디를 생성하고, 이를 print로 출력하여 데이터 구조 확인
+    final requestBody = json.encode({
+      'plantTypeId': plantTypeId,
+      'categoryId': categoryId,
+      'sensorId': sensorId,
+      'imageUrl': imageUrl,
+    });
+    print("Request Body: $requestBody"); // 요청 바디 출력
 
-    print("Response status: ${response.statusCode}");
-    print("Response body: ${response.body}");
-
-    if (response.statusCode == 201) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Plant registered successfully!')),
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'accept': 'application/json',
+        },
+        body: requestBody,
       );
-      Navigator.pop(context, 'newPlantAdded'); // 모달을 닫고 "newPlantAdded" 반환
-    } else {
+
+      // 응답 상태 코드와 본문 출력
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}"); // 서버의 응답 본문 출력
+
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Plant registered successfully!')),
+        );
+        Navigator.pop(context, 'newPlantAdded'); // 모달을 닫고 HomeScreen으로 반환
+      } else {
+        print('Failed to register plant. Status code: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to register plant. Error: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      print("Network error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to register plant. Error: ${response.statusCode}')),
+        const SnackBar(content: Text('Failed to register plant due to network error')),
       );
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {

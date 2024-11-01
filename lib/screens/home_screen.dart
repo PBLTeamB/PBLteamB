@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'add_plant_screen.dart';
-import '/widgets/custom_bottom_nav_bar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:rootin_app/screens/add_plant_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -27,11 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         setState(() {
-          plantData = responseData['data']; // 새로운 식물 데이터를 업데이트
+          plantData = responseData['data'] ?? []; // 새로운 식물 데이터를 업데이트
         });
         print("Plants data refreshed successfully.");
       } else {
         print('Failed to load plants data: ${response.statusCode}');
+        print('Response body: ${response.body}'); // 오류 메시지 확인
       }
     } catch (e) {
       print('Error occurred while refreshing plants data: $e');
@@ -60,10 +59,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SvgPicture.asset('assets/icons/logo_signature_gray.svg', height: 24),
-                    Spacer(),
                     IconButton(
-                      icon: SvgPicture.asset('assets/icons/add_plant.svg'),
+                      icon: Icon(Icons.refresh),
+                      onPressed: _refreshPlants,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
                       onPressed: () async {
                         final result = await Navigator.push(
                           context,
@@ -85,8 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   final plant = plantData[index];
                   return ListTile(
                     leading: Image.network(plant['imageUrl']),
-                    title: Text(plant['plantTypeName']),
-                    subtitle: Text('Status: ${plant['status']}'),
+                    title: Text(plant['plantTypeName'] ?? 'Unnamed Plant'),
+                    subtitle: Text('Status: ${plant['status'] ?? 'Unknown'}'),
                   );
                 },
                 childCount: plantData.length,
@@ -94,9 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 0,
       ),
     );
   }

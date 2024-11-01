@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'room_selection_screen.dart'; // RoomSelectionScreen 파일 import
+import 'room_selection_screen.dart';
 
 class SiteSelectionScreen extends StatefulWidget {
-  final String id;
+  final int id;
   final String name;
   final String subname;
   final String imageUrl;
@@ -22,7 +22,7 @@ class SiteSelectionScreen extends StatefulWidget {
 }
 
 class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
-  List<String> sites = [];
+  List<Map<String, dynamic>> sites = []; // API로부터 추출한 데이터
   int? selectedIndex;
   bool isContinueEnabled = false;
 
@@ -44,17 +44,21 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body)['data'];
-      final siteNames = <String>{}; // 중복 제거를 위해 Set 사용
+      final uniqueSites = <String, Map<String, dynamic>>{}; // 중복 제거용
 
       for (var item in data) {
         final name = item['name'];
         if (name.contains('/')) {
-          siteNames.add(name.split('/')[0]); // '/' 앞의 값을 추가
+          final siteName = name.split('/')[0];
+          uniqueSites[siteName] = {
+            'categoryId': item['id'],
+            'siteName': siteName,
+          };
         }
       }
 
       setState(() {
-        sites = siteNames.toList(); // Set을 List로 변환하여 업데이트
+        sites = uniqueSites.values.toList(); // 중복 제거 후 List로 변환
       });
     } else {
       print('Failed to load sites');
@@ -66,44 +70,6 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
       selectedIndex = index;
       isContinueEnabled = true;
     });
-  }
-
-  void addSite() async {
-    String? newSite = await showDialog(
-      context: context,
-      builder: (context) {
-        String siteName = "";
-        return AlertDialog(
-          title: const Text('Add a new site'),
-          content: TextField(
-            onChanged: (value) {
-              siteName = value;
-            },
-            decoration: const InputDecoration(hintText: 'Enter site name'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, siteName);
-              },
-              child: const Text('Add'),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (newSite != null && newSite.isNotEmpty) {
-      setState(() {
-        sites.add(newSite);
-        selectedIndex = sites.length - 1;
-        isContinueEnabled = true;
-      });
-    }
   }
 
   @override
@@ -127,23 +93,8 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
                 crossAxisSpacing: 10,
                 childAspectRatio: 2.5,
               ),
-              itemCount: sites.length + 1,
+              itemCount: sites.length,
               itemBuilder: (context, index) {
-                if (index == sites.length) {
-                  return ElevatedButton(
-                    onPressed: addSite,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      side: BorderSide(color: Colors.grey),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text('+ Add Site'),
-                  );
-                }
-
                 final site = sites[index];
                 return ElevatedButton(
                   onPressed: () => onSelectSite(index),
@@ -157,7 +108,7 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text(site),
+                  child: Text(site['siteName']),
                 );
               },
             ),
@@ -167,12 +118,13 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
             child: ElevatedButton(
               onPressed: isContinueEnabled
                   ? () {
+                      final selectedSite = sites[selectedIndex!];
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => RoomSelectionScreen(
-                            site: sites[selectedIndex!],
-                            id: widget.id, // id를 int로 변환
+                            site: selectedSite['siteName'],
+                            id: widget.id,
                             name: widget.name,
                             subname: widget.subname,
                             imageUrl: widget.imageUrl,

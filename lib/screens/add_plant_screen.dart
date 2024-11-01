@@ -35,12 +35,13 @@ Future<void> fetchPlantList() async {
     http.StreamedResponse response = await request.send();
     if (response.statusCode == 200) {
       final responseBody = await response.stream.bytesToString();
+      print('API Response: $responseBody'); // 전체 API 응답 확인
       final data = json.decode(responseBody);
       setState(() {
         plantList = data['data'].map((plant) {
-          print(plant); // 여기서 plant 데이터를 출력하여 plantid가 올바르게 수신되는지 확인
+          print('Plant data: $plant'); // 각 plant의 데이터를 확인
           return {
-            'id': plant['plantid'],
+            'id': plant['id'],
             'name': plant['name'],
             'subname': plant['subname'],
             'imageUrl': plant['imageUrl']
@@ -152,11 +153,13 @@ Future<void> fetchPlantList() async {
                         final plant = plantList[index];
                         return GestureDetector(
                           onTap: () {
+                            print('Navigating to AddPlantDetailScreen with data: ${plant}'); // plant 전체 데이터 확인
+                            print('Plant id: ${plant['id']}'); // 개별적으로 id도 확인
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AddPlantDetailScreen(
-                                  id: plant['plantid'] ?? 'Plant id',
+                                  id: plant['id'] ?? 'Plant id',
                                   name: plant['name'] ?? 'Plant name',
                                   subname: plant['subname'] ?? 'Sub plant name',
                                   imageUrl: plant['imageUrl'] ?? 'assets/images/default_plant.png',

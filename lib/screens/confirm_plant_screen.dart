@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import '/widgets/connect_sensor_modal.dart';
 
 class ConfirmPlantScreen extends StatelessWidget {
-  final String id;
+  final int id;
   final String plantName;
   final String roomName;
+  final int categoryId; // categoryId를 직접 전달받음
   final String imageUrl;
 
   const ConfirmPlantScreen({
@@ -12,21 +13,15 @@ class ConfirmPlantScreen extends StatelessWidget {
     required this.id,
     required this.plantName,
     required this.roomName,
+    required this.categoryId, // 전달된 categoryId 사용
     required this.imageUrl,
   }) : super(key: key);
 
-  // 모달을 띄우는 함수
   void _showConnectSensorModal(BuildContext context) {
-    int? plantTypeId;
-    int categoryId = _getCategoryId(roomName); // roomName을 기반으로 categoryId 생성
+    final plantTypeId = id; // id 값을 plantTypeId로 사용
 
-    // plantTypeId를 정수로 변환하고 실패할 경우 기본값 사용
-    try {
-      plantTypeId = int.parse(id); // id가 정수가 아닌 경우 예외 발생
-    } catch (e) {
-      print("Invalid plantTypeId: $id. Using default value 0.");
-      plantTypeId = 1; // 기본값으로 설정
-    }
+    print('PlantTypeId in ConfirmPlantScreen: $plantTypeId'); // 확인용 출력
+    print('CategoryId in ConfirmPlantScreen: $categoryId'); // 확인용 출력
 
     showModalBottomSheet(
       context: context,
@@ -34,33 +29,17 @@ class ConfirmPlantScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withOpacity(0.6),
       builder: (context) => ConnectSensorModal(
-        plantTypeId: plantTypeId!, // 변환된 int 값을 전달
-        categoryId: categoryId,    // 변환된 int 값을 전달
-        sensorId: '1234',
+        plantTypeId: plantTypeId,
+        categoryId: categoryId, // 직접 전달된 categoryId 사용
+        sensorId: 1234, // 예시 sensorId
         imageUrl: imageUrl,
       ),
     );
   }
 
-  // roomName을 categoryId로 변환하는 예시 함수
-  int _getCategoryId(String roomName) {
-    switch (roomName) {
-      case 'Bedroom':
-        return 1;
-      case 'Livingroom':
-        return 2;
-      case 'Kitchen':
-        return 3;
-      case 'Bathroom':
-        return 4;
-      default:
-        print("Unknown roomName: $roomName. Using default categoryId 0.");
-        return 0; // 기본값
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    print('Current id in ConfirmPlantScreen: $id'); // id 확인
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(

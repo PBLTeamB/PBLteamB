@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'site_selection_screen.dart'; // SiteSelectionScreen 파일 import
 
 class AddPlantDetailScreen extends StatelessWidget {
-  final String id;
+  final int id;
   final String name;
   final String subname;
   final String imageUrl;
@@ -17,6 +17,7 @@ class AddPlantDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Current id in AddPlantDetailScreen: $id'); // id 확인
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -72,6 +73,7 @@ class AddPlantDetailScreen extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
+                    print('Navigating to SiteSelectionScreen with id: $id'); // id 확인
                     // SiteSelectionScreen으로 이동
                     Navigator.push(
                       context,

@@ -5,7 +5,7 @@ import 'confirm_plant_screen.dart';
 
 class RoomSelectionScreen extends StatefulWidget {
   final String site;
-  final String id;
+  final int id;
   final String name;
   final String subname;
   final String imageUrl;
@@ -24,7 +24,7 @@ class RoomSelectionScreen extends StatefulWidget {
 }
 
 class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
-  List<String> rooms = [];
+  List<Map<String, dynamic>> rooms = []; // 방 정보 저장
   int? selectedIndex;
   bool isContinueEnabled = false;
 
@@ -46,18 +46,21 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body)['data'];
-      final roomNames = <String>{};
+      final roomNames = <Map<String, dynamic>>{};
 
       for (var item in data) {
         final name = item['name'];
-        // 선택된 site와 '/' 앞의 값이 일치하는 경우 '/' 뒤의 값을 가져오기
-        if (name.startsWith(widget.site + '/')) {
-          roomNames.add(name.split('/')[1]); // '/' 뒤의 값을 추가
+        // site와 '/' 앞의 값이 일치하는 경우 '/' 뒤의 값을 roomName으로 추출
+        if (name.startsWith('${widget.site}/')) {
+          roomNames.add({
+            'roomName': name.split('/')[1], // '/' 뒤의 값을 roomName으로
+            'categoryId': item['id'] // 해당 categoryId
+          });
         }
       }
 
       setState(() {
-        rooms = roomNames.toList(); // Set을 List로 변환하여 업데이트
+        rooms = List<Map<String, dynamic>>.from(roomNames); // 중복 제거 후 List로 변환
       });
     } else {
       print('Failed to load rooms');
@@ -102,7 +105,7 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
 
     if (newRoom != null && newRoom.isNotEmpty) {
       setState(() {
-        rooms.add(newRoom);
+        rooms.add({'roomName': newRoom, 'categoryId': -1}); // 새 room 추가, id는 임시 값
         selectedIndex = rooms.length - 1;
         isContinueEnabled = true;
       });
@@ -160,7 +163,7 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text(room),
+                  child: Text(room['roomName']),
                 );
               },
             ),
@@ -170,13 +173,15 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
             child: ElevatedButton(
               onPressed: isContinueEnabled && selectedIndex != null && selectedIndex! < rooms.length
                   ? () {
+                      final selectedRoom = rooms[selectedIndex!];
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ConfirmPlantScreen(
-                            id: widget.id, // id를 int로 변환
+                            id: widget.id,
                             plantName: widget.name,
-                            roomName: rooms[selectedIndex!], // selectedIndex 유효성 검사 추가
+                            roomName: selectedRoom['roomName'],
+                            categoryId: selectedRoom['categoryId'], // 선택된 categoryId 전달
                             imageUrl: widget.imageUrl,
                           ),
                         ),
