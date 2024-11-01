@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'confirm_plant_screen.dart';
 
 class RoomSelectionScreen extends StatefulWidget {
   final String site;
+  final String id;
   final String name;
   final String subname;
   final String imageUrl;
@@ -10,6 +13,7 @@ class RoomSelectionScreen extends StatefulWidget {
   const RoomSelectionScreen({
     Key? key,
     required this.site,
+    required this.id,
     required this.name,
     required this.subname,
     required this.imageUrl,
@@ -20,14 +24,50 @@ class RoomSelectionScreen extends StatefulWidget {
 }
 
 class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
-  List<String> rooms = ["Livingroom", "Bedroom", "Kitchen", "Bathroom"]; // 예시 데이터
-  int? selectedIndex; // 선택된 아이템의 인덱스를 저장
+  List<String> rooms = [];
+  int? selectedIndex;
   bool isContinueEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getRooms(); // API 호출하여 방 목록 가져오기
+  }
+
+  Future<void> getRooms() async {
+    final url = Uri.parse('https://api.rootin.me/v1/categories');
+    final response = await http.get(
+      url,
+      headers: {
+        'accept': 'application/json',
+        'Authorization': 'Bearer 11', // 인증 토큰
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body)['data'];
+      final roomNames = <String>{};
+
+      for (var item in data) {
+        final name = item['name'];
+        // 선택된 site와 '/' 앞의 값이 일치하는 경우 '/' 뒤의 값을 가져오기
+        if (name.startsWith(widget.site + '/')) {
+          roomNames.add(name.split('/')[1]); // '/' 뒤의 값을 추가
+        }
+      }
+
+      setState(() {
+        rooms = roomNames.toList(); // Set을 List로 변환하여 업데이트
+      });
+    } else {
+      print('Failed to load rooms');
+    }
+  }
 
   void onSelectRoom(int index) {
     setState(() {
       selectedIndex = index;
-      isContinueEnabled = true; // 선택 시 Continue 버튼 활성화
+      isContinueEnabled = true;
     });
   }
 
@@ -63,7 +103,7 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
     if (newRoom != null && newRoom.isNotEmpty) {
       setState(() {
         rooms.add(newRoom);
-        selectedIndex = rooms.length - 1; // 새로 추가된 방을 선택 상태로 설정
+        selectedIndex = rooms.length - 1;
         isContinueEnabled = true;
       });
     }
@@ -128,20 +168,19 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
           Padding(
             padding: const EdgeInsets.all(20),
             child: ElevatedButton(
-              onPressed: isContinueEnabled
+              onPressed: isContinueEnabled && selectedIndex != null && selectedIndex! < rooms.length
                   ? () {
-                      if (selectedIndex != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ConfirmPlantScreen(
-                              plantName: widget.name,
-                              roomName: rooms[selectedIndex!],
-                              imageUrl: widget.imageUrl,
-                            ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConfirmPlantScreen(
+                            id: widget.id, // id를 int로 변환
+                            plantName: widget.name,
+                            roomName: rooms[selectedIndex!], // selectedIndex 유효성 검사 추가
+                            imageUrl: widget.imageUrl,
                           ),
-                        );
-                      }
+                        ),
+                      );
                     }
                   : null,
               child: const Text('Continue'),

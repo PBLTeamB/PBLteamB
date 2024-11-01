@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'site_selection_screen.dart'; // SiteSelectionScreen 파일 import
 
 class AddPlantDetailScreen extends StatelessWidget {
+  final String id;
   final String name;
   final String subname;
   final String imageUrl;
 
   const AddPlantDetailScreen({
     Key? key,
+    required this.id,
     required this.name,
     required this.subname,
     required this.imageUrl,
@@ -75,6 +77,7 @@ class AddPlantDetailScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => SiteSelectionScreen(
+                          id: id, // id를 int로 변환
                           name: name,
                           subname: subname,
                           imageUrl: imageUrl,

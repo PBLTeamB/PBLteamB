@@ -3,9 +3,21 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ConnectSensorModal extends StatelessWidget {
+  final int plantTypeId; // String에서 int로 변경
+  final int categoryId;   // String에서 int로 변경
+  final String sensorId;
+  final String imageUrl;
+
+  ConnectSensorModal({
+    required this.plantTypeId,
+    required this.categoryId,
+    required this.sensorId,
+    required this.imageUrl,
+  });
+
   Future<void> _registerPlant(BuildContext context) async {
     final url = Uri.parse('https://api.rootin.me/v1/plants');
-    print("Starting POST request to register plant"); // 디버깅 메시지
+    print("Starting POST request to register plant");
 
     final response = await http.post(
       url,
@@ -14,22 +26,21 @@ class ConnectSensorModal extends StatelessWidget {
         'accept': 'application/json',
       },
       body: json.encode({
-        'plantTypeId': 1,   // 예시 값
-        'categoryId': 2,    // 예시 값
-        'sensorId': 1234,   // 예시 값
-        'imageUrl': 'https://example.com/image.png', // 예시 값
+        'plantTypeId': plantTypeId, // int 타입으로 전달
+        'categoryId': categoryId,   // int 타입으로 전달
+        'sensorId': sensorId,
+        'imageUrl': imageUrl,
       }),
     );
 
-    print("Response status: ${response.statusCode}"); // 응답 상태 코드 확인
-    print("Response body: ${response.body}"); // 응답 본문 확인
+    print("Response status: ${response.statusCode}");
+    print("Response body: ${response.body}");
 
     if (response.statusCode == 201) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Plant registered successfully!')),
       );
-      Navigator.pop(context); // 모달 닫기
-      Navigator.pushReplacementNamed(context, '/home_screen'); // home_screen으로 이동
+      Navigator.pop(context, 'newPlantAdded'); // 모달을 닫고 "newPlantAdded" 반환
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to register plant. Error: ${response.statusCode}')),
@@ -78,7 +89,7 @@ class ConnectSensorModal extends StatelessWidget {
           const SizedBox(height: 32),
           ElevatedButton(
             onPressed: () async {
-              await _registerPlant(context); // 비동기 처리 확인
+              await _registerPlant(context);
             },
             child: const Text('Connect'),
             style: ElevatedButton.styleFrom(

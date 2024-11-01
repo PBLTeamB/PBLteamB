@@ -2,190 +2,94 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'add_plant_screen.dart';
 import '/widgets/custom_bottom_nav_bar.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-
-class FilterButtonWidget extends StatelessWidget {
-  final String label;
-
-  FilterButtonWidget({required this.label});
-
+class HomeScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Color(0xffeeeeee),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-              height: 1.4,
-              letterSpacing: -0.02,
-              color: Color(0xff000000),
-            ),
-          ),
-          SizedBox(width: 4),
-          Transform.rotate(
-            angle: -1.5708, // -90 degrees in radians
-            child: SvgPicture.asset(
-              'assets/icons/arrow.svg',
-              height: 12, // Original size (24) * 50%
-              width: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class HomeScreen extends StatelessWidget {
+class _HomeScreenState extends State<HomeScreen> {
+  List<dynamic> plantData = []; // 식물 데이터 리스트
+
+  // 식물 목록을 새로고침하는 함수
+  Future<void> _refreshPlants() async {
+    final url = Uri.parse('https://api.rootin.me/v1/plants');
+    final headers = {
+      'accept': 'application/json',
+      'Authorization': 'Bearer 11',
+    };
+
+    try {
+      final response = await http.get(url, headers: headers);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        setState(() {
+          plantData = responseData['data']; // 새로운 식물 데이터를 업데이트
+        });
+        print("Plants data refreshed successfully.");
+      } else {
+        print('Failed to load plants data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error occurred while refreshing plants data: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshPlants(); // 초기 로딩 시 데이터 가져오기
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF6F6F6),
       body: SafeArea(
         child: CustomScrollView(
-          physics: BouncingScrollPhysics(), // iOS 스타일의 스크롤 물리 효과 추가
+          physics: BouncingScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(
               child: Container(
-                margin: EdgeInsets.only(top: 20), // AppBar를 20px 내려오도록 설정
+                margin: EdgeInsets.only(top: 20),
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 color: Colors.transparent,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SvgPicture.asset('assets/icons/logo_signature_gray.svg', height: 24),
-                    Spacer(), // 공간을 띄워주기 위한 Spacer 위젯 추가
+                    Spacer(),
                     IconButton(
                       icon: SvgPicture.asset('assets/icons/add_plant.svg'),
-                      onPressed: () {
-                        Navigator.push(
+                      onPressed: () async {
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => AddPlantScreen()),
                         );
+
+                        if (result == 'newPlantAdded') {
+                          await _refreshPlants(); // 새로 등록된 식물이 있으면 새로고침
+                        }
                       },
                     ),
                   ],
                 ),
               ),
             ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    SizedBox(height: 32),
-                    // Today's Task Section
-                    Text(
-                      "Today's Task",
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 22,
-                        height: 1.36,
-                        letterSpacing: -0.01,
-                        color: Color(0xff000000),
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xffeeeeee),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'You have 1 plant waiting to be watered',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    height: 1.36,
-                                    letterSpacing: -0.01,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Check your task ->',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
-                                    height: 1.36,
-                                    letterSpacing: -0.01,
-                                    color: Color(0xff757575),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          Image.asset('assets/images/banner_plant.png', height: 80), // Corrected path from 'assets/icons/banner_plant.svg'
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 40),
-                    // My Plants Section
-                    Text(
-                      "My plants",
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 22,
-                        height: 1.36,
-                        letterSpacing: -0.01,
-                        color: Color(0xff000000),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          FilterButtonWidget(label: 'All status'),
-                          SizedBox(width: 8.0),
-                          FilterButtonWidget(label: 'All locations'),
-                          SizedBox(width: 8.0),
-                          FilterButtonWidget(label: 'All rooms'),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                  ],
-                ),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              sliver: SliverGrid(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 3 / 4,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    return PlantCard();
-                  },
-                  childCount: 4,
-                ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final plant = plantData[index];
+                  return ListTile(
+                    leading: Image.network(plant['imageUrl']),
+                    title: Text(plant['plantTypeName']),
+                    subtitle: Text('Status: ${plant['status']}'),
+                  );
+                },
+                childCount: plantData.length,
               ),
             ),
           ],
@@ -193,79 +97,6 @@ class HomeScreen extends StatelessWidget {
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
-      ),
-    );
-  }
-}
-
-
-class PlantCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: SvgPicture.asset(
-                    'assets/images/card_plant.svg',
-                    color: Color(0xff757575),
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                  ),
-                ),
-                Positioned(
-                  bottom: 10,
-                  left: 10,
-                  child: SvgPicture.asset(
-                    'assets/icons/status_ideal.svg',
-                    height: 24,
-                    width: 24,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 4), // Added 4px space between image and text
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Pink Quil',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    height: 1.36,
-                    letterSpacing: -0.02, 
-                    color: Color(0xff000000),
-                  ),
-                ),
-                SizedBox(height: 0),
-                Text(
-                  'In Livingroom',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
-                    height: 1.36,
-                    letterSpacing: -0.02,
-                    color: Color(0xff757575),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

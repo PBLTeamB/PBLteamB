@@ -22,31 +22,40 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
     fetchPlantList();
   }
 
-  Future<void> fetchPlantList() async {
-    var headers = {
-      'accept': 'application/json',
-      'Authorization': 'Bearer 11',
-    };
-    var request = http.Request('GET', Uri.parse('https://api.rootin.me/v1/plant-types?skip=0&size=10'));
+Future<void> fetchPlantList() async {
+  var headers = {
+    'accept': 'application/json',
+    'Authorization': 'Bearer 11',
+  };
+  var request = http.Request('GET', Uri.parse('https://api.rootin.me/v1/plant-types?skip=0&size=10'));
 
-    request.headers.addAll(headers);
+  request.headers.addAll(headers);
 
-    try {
-      http.StreamedResponse response = await request.send();
-      if (response.statusCode == 200) {
-        final responseBody = await response.stream.bytesToString();
-        final data = json.decode(responseBody);
-        setState(() {
-          plantList = data['data'];
-          isLoading = false;
-        });
-      } else {
-        print('Failed to load plant list: ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      print('Error occurred: $e');
+  try {
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      final responseBody = await response.stream.bytesToString();
+      final data = json.decode(responseBody);
+      setState(() {
+        plantList = data['data'].map((plant) {
+          print(plant); // 여기서 plant 데이터를 출력하여 plantid가 올바르게 수신되는지 확인
+          return {
+            'id': plant['plantid'],
+            'name': plant['name'],
+            'subname': plant['subname'],
+            'imageUrl': plant['imageUrl']
+          };
+        }).toList();
+        isLoading = false;
+      });
+    } else {
+      print('Failed to load plant list: ${response.reasonPhrase}');
     }
+  } catch (e) {
+    print('Error occurred: $e');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +156,7 @@ class _AddPlantScreenState extends State<AddPlantScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AddPlantDetailScreen(
+                                  id: plant['plantid'] ?? 'Plant id',
                                   name: plant['name'] ?? 'Plant name',
                                   subname: plant['subname'] ?? 'Sub plant name',
                                   imageUrl: plant['imageUrl'] ?? 'assets/images/default_plant.png',
