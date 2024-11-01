@@ -23,7 +23,6 @@ class ConnectSensorModal extends StatelessWidget {
     final requestBody = json.encode({
       'plantTypeId': plantTypeId,
       'categoryId': categoryId,
-      'sensorId': sensorId,
       'imageUrl': imageUrl,
     });
     print("Request Body: $requestBody"); // 요청 바디 출력
@@ -34,6 +33,7 @@ class ConnectSensorModal extends StatelessWidget {
         headers: {
           'Content-Type': 'application/json',
           'accept': 'application/json',
+          'Authorization' : 'Bearer 11'
         },
         body: requestBody,
       );
