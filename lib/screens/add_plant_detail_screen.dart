@@ -8,12 +8,12 @@ class AddPlantDetailScreen extends StatelessWidget {
   final String imageUrl;
 
   const AddPlantDetailScreen({
-    Key? key,
+    super.key,
     required this.id,
     required this.name,
     required this.subname,
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +87,13 @@ class AddPlantDetailScreen extends StatelessWidget {
                       ),
                     );
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   child: const Text(
                     'Ready to add plant',
                     style: TextStyle(
@@ -95,13 +102,6 @@ class AddPlantDetailScreen extends StatelessWidget {
                       letterSpacing: -0.02,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),

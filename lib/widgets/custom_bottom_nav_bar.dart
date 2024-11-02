@@ -9,7 +9,7 @@ import '/screens/care_screen.dart';
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
 
-  CustomBottomNavBar({
+  const CustomBottomNavBar({super.key, 
     required this.currentIndex,
   });
 
@@ -40,7 +40,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 64,
       child: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

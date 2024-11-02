@@ -63,7 +63,7 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: primaryColor,
         secondary: secondaryColor,
-        background: gray100,
+        surface: gray100,
         onPrimary: white,
         onSecondary: black,
       ),

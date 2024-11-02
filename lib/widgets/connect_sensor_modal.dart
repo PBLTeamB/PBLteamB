@@ -8,7 +8,7 @@ class ConnectSensorModal extends StatelessWidget {
   final int sensorId; // int로
   final String imageUrl;
 
-  ConnectSensorModal({
+  const ConnectSensorModal({super.key, 
     required this.plantTypeId,
     required this.categoryId,
     required this.sensorId,
@@ -106,7 +106,6 @@ Future<void> _registerPlant(BuildContext context) async {
             onPressed: () async {
               await _registerPlant(context);
             },
-            child: const Text('Connect'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
               minimumSize: const Size.fromHeight(50),
@@ -114,6 +113,7 @@ Future<void> _registerPlant(BuildContext context) async {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
+            child: const Text('Connect'),
           ),
         ],
       ),

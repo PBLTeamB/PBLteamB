@@ -11,13 +11,13 @@ class RoomSelectionScreen extends StatefulWidget {
   final String imageUrl;
 
   const RoomSelectionScreen({
-    Key? key,
+    super.key,
     required this.site,
     required this.id,
     required this.name,
     required this.subname,
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   @override
   _RoomSelectionScreenState createState() => _RoomSelectionScreenState();
@@ -105,7 +105,7 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
 
     if (newRoom != null && newRoom.isNotEmpty) {
       setState(() {
-        rooms.add({'roomName': newRoom, 'categoryId': -1}); // 새 room 추가, id는 임시 값
+        rooms.add({'roomName': newRoom, 'categoryId': -1});
         selectedIndex = rooms.length - 1;
         isContinueEnabled = true;
       });
@@ -188,7 +188,6 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
                       );
                     }
                   : null,
-              child: const Text('Continue'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
@@ -197,6 +196,7 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
+              child: const Text('Continue'),
             ),
           ),
         ],

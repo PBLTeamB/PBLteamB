@@ -9,13 +9,13 @@ class ConfirmPlantScreen extends StatelessWidget {
   final String imageUrl;
 
   const ConfirmPlantScreen({
-    Key? key,
+    super.key,
     required this.id,
     required this.plantName,
     required this.roomName,
     required this.categoryId, // 전달된 categoryId 사용
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   void _showConnectSensorModal(BuildContext context) {
     final plantTypeId = id; // id 값을 plantTypeId로 사용
@@ -87,6 +87,13 @@ class ConfirmPlantScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ElevatedButton(
               onPressed: () => _showConnectSensorModal(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                minimumSize: const Size.fromHeight(50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               child: const Text(
                 'Continue to add sensor',
                 style: TextStyle(
@@ -95,13 +102,6 @@ class ConfirmPlantScreen extends StatelessWidget {
                   letterSpacing: -0.02,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                minimumSize: const Size.fromHeight(50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),

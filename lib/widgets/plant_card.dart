@@ -8,7 +8,7 @@ class PlantCard extends StatelessWidget {
   final String imageUrl;
   final String statusIcon;
 
-  const PlantCard({
+  const PlantCard({super.key, 
     required this.title,
     required this.location,
     required this.imageUrl,

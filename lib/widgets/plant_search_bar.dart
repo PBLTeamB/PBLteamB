@@ -7,10 +7,10 @@ class PlantSearchBar extends StatelessWidget {
   final VoidCallback onCameraPressed;
 
   const PlantSearchBar({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onCameraPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

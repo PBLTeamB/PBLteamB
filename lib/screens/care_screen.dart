@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '/widgets/custom_bottom_nav_bar.dart';
 
 class CareScreen extends StatefulWidget {
+  const CareScreen({super.key});
+
   @override
   _CareScreenState createState() => _CareScreenState();
 }

@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'add_plant_detail_screen.dart'; // AddPlantDetailScreen 파일 경로에 맞게 수정
 
 class AddPlantScreen extends StatefulWidget {
-  const AddPlantScreen({Key? key}) : super(key: key);
+  const AddPlantScreen({super.key});
 
   @override
   _AddPlantScreenState createState() => _AddPlantScreenState();
@@ -153,7 +153,7 @@ Future<void> fetchPlantList() async {
                         final plant = plantList[index];
                         return GestureDetector(
                           onTap: () {
-                            print('Navigating to AddPlantDetailScreen with data: ${plant}'); // plant 전체 데이터 확인
+                            print('Navigating to AddPlantDetailScreen with data: $plant'); // plant 전체 데이터 확인
                             print('Plant id: ${plant['id']}'); // 개별적으로 id도 확인
                             Navigator.push(
                               context,

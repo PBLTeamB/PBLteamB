@@ -11,12 +11,12 @@ class PlantItem extends StatelessWidget {
   final String plantSubName;
   final String imagePath;
 
-  PlantItem({
-    Key? key,
+  const PlantItem({
+    super.key,
     required this.plantName,
     required this.plantSubName,
     required this.imagePath,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

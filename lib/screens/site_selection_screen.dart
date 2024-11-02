@@ -10,12 +10,12 @@ class SiteSelectionScreen extends StatefulWidget {
   final String imageUrl;
 
   const SiteSelectionScreen({
-    Key? key,
+    super.key,
     required this.id,
     required this.name,
     required this.subname,
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   @override
   _SiteSelectionScreenState createState() => _SiteSelectionScreenState();
@@ -133,7 +133,6 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
                       );
                     }
                   : null,
-              child: const Text('Continue'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
@@ -142,6 +141,7 @@ class _SiteSelectionScreenState extends State<SiteSelectionScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
+              child: const Text('Continue'),
             ),
           ),
         ],
