@@ -1,124 +1,78 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+// lib/screens/plant_detail_screen.dart
 
-import '../models/plant_detail.dart';
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import '../services/api_client.dart';
 
 class PlantDetailScreen extends StatefulWidget {
-  final int plantId;
+  final String plantTypeId;
 
-  const PlantDetailScreen({Key? key, required this.plantId}) : super(key: key);
+  PlantDetailScreen({required this.plantTypeId});
 
   @override
   _PlantDetailScreenState createState() => _PlantDetailScreenState();
 }
 
 class _PlantDetailScreenState extends State<PlantDetailScreen> {
-  late Future<PlantDetail> plantDetailFuture;
-  late Future<Map<String, dynamic>> moistureTrendFuture;
-  late Future<Map<String, dynamic>> upcomingCareFuture;
+  late Future<Map<String, dynamic>> _plantTypeInfo;
+  final ApiClient _apiClient = ApiClient();
 
   @override
   void initState() {
     super.initState();
-    plantDetailFuture = fetchPlantDetail(widget.plantId);
-    moistureTrendFuture = fetchMoistureTrend(widget.plantId);
-    upcomingCareFuture = fetchUpcomingCare(widget.plantId);
-  }
-
-  Future<PlantDetail> fetchPlantDetail(int plantId) async {
-    final response = await http.get(Uri.parse('https://api.rootin.me/v1/plants/$plantId'));
-
-    if (response.statusCode == 200) {
-      return PlantDetail.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load plant details');
-    }
-  }
-
-  Future<Map<String, dynamic>> fetchMoistureTrend(int plantId) async {
-    final response = await http.get(Uri.parse('https://api.rootin.me/v1/plant/$plantId/moisture-trend'));
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load moisture trend');
-    }
-  }
-
-  Future<Map<String, dynamic>> fetchUpcomingCare(int plantId) async {
-    final response = await http.get(Uri.parse('https://api.rootin.me/v1/plant/$plantId/upcoming'));
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load upcoming care schedule');
-    }
+    _plantTypeInfo = _apiClient.getPlantTypeInfo(widget.plantTypeId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Plant Details'),
+        title: Text('Plant Type Details'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            FutureBuilder<PlantDetail>(
-              future: plantDetailFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else if (!snapshot.hasData) {
-                  return const Text('No plant details available');
-                } else {
-                  final plant = snapshot.data!;
-                  return Column(
-                    children: [
-                      Image.network(plant.imageUrl),
-                      Text(plant.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                      Text('Location: ${plant.location}'),
-                      Wrap(
-                        children: plant.careTips.map((tip) => Chip(label: Text(tip))).toList(),
-                      ),
-                    ],
-                  );
-                }
-              },
-            ),
-            const SizedBox(height: 20),
-            FutureBuilder<Map<String, dynamic>>(
-              future: moistureTrendFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final trendData = snapshot.data;
-                  return Text('Moisture Trend: ${trendData?['trend'] ?? 'N/A'}');
-                }
-              },
-            ),
-            const SizedBox(height: 20),
-            FutureBuilder<Map<String, dynamic>>(
-              future: upcomingCareFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final upcomingData = snapshot.data;
-                  return Text('Upcoming Care: ${upcomingData?['next_event'] ?? 'N/A'}');
-                }
-              },
-            ),
-          ],
-        ),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: _plantTypeInfo,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            final dataList = snapshot.data?['data'] as List<dynamic> ?? [];
+
+            final plantTypeData = dataList.firstWhere(
+              (element) => element['id'].toString() == widget.plantTypeId,
+              orElse: () => null,
+            );
+
+            if (plantTypeData == null) {
+              return Center(child: Text('No matching plant type information found.'));
+            }
+
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    plantTypeData['name'] ?? 'No Name',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Subname: ${plantTypeData['subname'] ?? 'No Subname'}',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 20),
+                  if (plantTypeData['imageUrl'] != null)
+                    Image.network(plantTypeData['imageUrl']),
+                  SizedBox(height: 10),
+                ],
+              ),
+            );
+          } else {
+            return Center(child: Text('No data available'));
+          }
+        },
       ),
     );
   }
