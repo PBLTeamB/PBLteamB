@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'site_selection_screen.dart'; // SiteSelectionScreen 파일 import
 
 class AddPlantDetailScreen extends StatelessWidget {
-  final int id;
+  final String id;
   final String name;
   final String subname;
   final String imageUrl;

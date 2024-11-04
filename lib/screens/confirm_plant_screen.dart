@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '/widgets/connect_sensor_modal.dart';
 
 class ConfirmPlantScreen extends StatelessWidget {
-  final int id;
+  final String id;
   final String plantName;
   final String roomName;
   final int categoryId; // categoryId를 직접 전달받음

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ConnectSensorModal extends StatelessWidget {
-  final int plantTypeId; 
+  final String plantTypeId; 
   final int categoryId;   
   final int sensorId; // int로
   final String imageUrl;

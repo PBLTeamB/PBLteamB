@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'room_selection_screen.dart';
 
 class SiteSelectionScreen extends StatefulWidget {
-  final int id;
+  final String id;
   final String name;
   final String subname;
   final String imageUrl;

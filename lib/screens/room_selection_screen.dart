@@ -5,7 +5,7 @@ import 'confirm_plant_screen.dart';
 
 class RoomSelectionScreen extends StatefulWidget {
   final String site;
-  final int id;
+  final String id;
   final String name;
   final String subname;
   final String imageUrl;

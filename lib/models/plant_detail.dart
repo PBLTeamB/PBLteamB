@@ -1,5 +1,5 @@
 class PlantDetail {
-  final int id;
+  final String id;
   final String name;
   final String location;
   final String imageUrl;
@@ -15,7 +15,7 @@ class PlantDetail {
 
   factory PlantDetail.fromJson(Map<String, dynamic> json) {
     return PlantDetail(
-      id: json['id'] != null && json['id'] is int ? json['id'] : 0,  // Default ID if null or not int
+      id: json['id'] != null && json['id'] is String ? json['id'] : 0,  // Default ID if null or not int
       name: json['name'] ?? 'Unknown Plant',
       location: json['location'] ?? 'Unknown Location',
       imageUrl: json['image_url'] ?? 'https://via.placeholder.com/150', // Default image
