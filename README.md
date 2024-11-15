@@ -1,16 +1,22 @@
-# my_flutter_app
+# Rootin App
 
-A new Flutter project.
+Rootin App is a Flutter application designed to help users monitor plant soil moisture levels, provide care tips, and track upcoming watering schedules for their plants.
+
+## Features
+
+- **Real-time Soil Moisture Monitoring**: Get updates on your plant’s soil moisture every minute.
+- **Care Tips**: Receive customized care tips for each plant type.
+- **Watering Reminders**: Track the days remaining until the next scheduled watering.
+- **Weekly Trends**: Visualize soil moisture trends over time.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
+- [Flutter SDK](https://flutter.dev/docs/get-started/install)
+- [Firebase Setup](https://firebase.google.com/docs/flutter/setup)
 
-A few resources to get you started if this is your first Flutter project:
+### Installation
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/PBLTeamB/PBLteamB.git
